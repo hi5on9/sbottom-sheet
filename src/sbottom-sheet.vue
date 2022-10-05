@@ -47,7 +47,7 @@ export default {
       type: String,
     },
     threshold: { // percentage
-      default: 0.5,
+      default: 150,
       type: Number,
     },
     outsideClose: { // 시트 바깥 눌러서 닫기
@@ -81,6 +81,7 @@ export default {
   },
   data() {
     return {
+        isVisible: this.value,
         sheetY: this.height,
         startY: 0,
         transformY: 0,
@@ -106,17 +107,10 @@ export default {
       }
       return style
     },
-    getAutoHeight() {
-      const style = {
-        transform: `translateY(${this.transformY}px)`,
-        transition: 'transfrom .35s'
-      }
-      return style;
-    }
   },
   methods: {
     startDragEvent(e) {
-      if(this.outsideScroll) document.body.style.overflow = 'hidden';
+      if(this.outsideScroll) this.backgroundScrollOff();
 
       if (e instanceof window.MouseEvent || e instanceof MouseEvent) {
         this.startY = e.clientY;
@@ -133,38 +127,46 @@ export default {
       this.transformY = this.checkEvent(e) - this.startY
     },
     endDragEvent(e){
-      const sheet = document.getElementById("s--bottom-sheet-sheet")
       const EndY = this.checkEvent(e)
 
-      if(this.outsideScroll) document.body.style.overflow = '';
+      if(this.outsideScroll) this.backgroundScrollOn();
 
-      if(sheet.clientHeight - this.transformY <=  sheet.clientHeight * this.threshold) {
-        this.closeBottomSheet(true);
-      }
       if(this.threeStep) {
-        this.steps = EndY - this.startY > 50 ? this.steps - 1 : this.steps + 1;
-        this.changeStep();
+        this.changeStep(EndY - this.startY);
       }
 
-      this.transformY = 0
-      this.startY = 0
+      if(EndY - this.startY >=  this.threshold) {
+        this.closeBottomSheet(true);
+      } else {
+        this.transformY = 0
+        this.startY = 0
+      }
 
       window.removeEventListener('mousemove', this.onDragEvent);
       window.removeEventListener('touchmove', this.onDragEvent);
       window.removeEventListener('mouseup', this.endDragEvent);
       window.removeEventListener('touchend', this.endDragEvent);
     },
-    closeBottomSheet(status) {
-      if(!this.outsideClose && !status) return;
-      else {
-        this.$emit('input', false)
+    animationEndEvent(e) {
+      /** initialize all after transform */
+      if (!this.value) {
+        this.steps = 0;
+        this.startY = 0
+        this.transformY = 0
+        this.sheetY = this.height;
+        this.isVisible = false
       }
     },
     checkEvent(e) {
       if (e instanceof window.MouseEvent || e instanceof MouseEvent){ return  e.clientY }
       else { return e.changedTouches[0].clientY }
     },
-    changeStep() {
+    changeStep(gap) {
+      if (gap <= -1 * this.threshold / 2 ) {
+        this.steps = this.steps + 1 > 2 ? 2 : this.steps + 1
+      } else if (gap >= this.threshold / 2) {
+        this.steps = this.steps - 1 < 0 ? 0 : this.steps - 1
+      } else return
       switch (this.steps) {
         case 0:
           this.closeBottomSheet(true);
@@ -176,25 +178,33 @@ export default {
           this.sheetY = this.maxHeight
           break;
       }
+    },
+    closeBottomSheet(status) {
+      if(!this.outsideClose && !status) return;
+      else {
+        this.$emit('input', false)
+      }
+    },
+    backgroundScrollOn() {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+    },
+    backgroundScrollOff() {
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
     }
   },
   unmounted() {
-    document.body.style.overflow = '';
-    document.body.style.height = '';
+   this.backgroundScrollOn();
   },
   watch:{
     value: {
       immediate: true,
       handler(now) {
         if(now) {
-          this.steps = 1;
-          if(!this.outsideScroll) { document.body.style.overflow = 'hidden'; document.body.style.height = '100vh'; }
-        } else {
-          document.body.style.overflow = '';
-          document.body.style.height = '';
-          this.steps = 0;
-          this.sheetY = this.height;
-        }
+          this.isVisible = true;
+          if(!this.outsideScroll) this.backgroundScrollOff();
+        } else this.backgroundScrollOn();
       }
     }
   }
@@ -202,8 +212,8 @@ export default {
 </script>
 
 <template>
-  <div class="s--bottom-sheet-container" v-if="value" @click.self="closeBottomSheet(false)" :style="getStyle">
-    <div class="s--bottom-sheet-sheet" :style="getAutoHeight" id="s--bottom-sheet-sheet">
+  <div class="s--bottom-sheet-container" v-if="isVisible" @click.self="closeBottomSheet(false)" @animationend="animationEndEvent" :style="getStyle" :class="{ 'sheet-close':!value }">
+    <div class="s--bottom-sheet-sheet" id="s--bottom-sheet-sheet" >
       <!--  -->
       <header class="s--bottom-sheet-header"
           v-if="draggable"
