@@ -7,7 +7,7 @@
         .s--bottom-sheet-sheet { -webkit-animation: slide-out .35s forwards; animation: slide-out .35s forwards; }
     }
 
-    .s--bottom-sheet-sheet { height: var(--height); max-height: var(--max-height); min-height: var(--min-height); width: var(--width); max-width: var(--max-width); min-width: var(--min-width); bottom: 0; left: 0; right: 0; background:  var(--sheet-color); border-top-left-radius: var(--border-radius);  border-top-right-radius: var(--border-radius); padding: 10px; position: fixed; box-shadow:  0px 6px 30px -6px rgba(0, 0, 0, 0.15); transform: var(--translate-Y); margin: 0 auto; -webkit-animation: slide-in .4s ease; animation: slide-in .35s ease; transition: .35s ease;
+    .s--bottom-sheet-sheet { height: var(--height); max-height: var(--max-height); min-height: var(--min-height); width: var(--width); max-width: var(--max-width); min-width: var(--min-width); bottom: 0; left: 0; right: 0; background:  var(--sheet-color); border-top-left-radius: var(--border-radius);  border-top-right-radius: var(--border-radius); padding: 10px; position: fixed; box-shadow:  0px 6px 30px -6px rgba(0, 0, 0, 0.15); transform: var(--translate-Y); margin: 0 auto; -webkit-animation: slide-in .4s ease; animation: slide-in .35s ease; transition: var(--transition) .35s ease;
         &::after {position: absolute; content: ''; display: block; left: 0; right: 0; z-index: -1; top: 99%; height: 101vh; background-color: var(--sheet-color); width: 100%;}
 
         // header

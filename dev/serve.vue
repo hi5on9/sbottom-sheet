@@ -25,15 +25,12 @@ export default Vue.extend({
 
 <template>
   <div id="app">
-    <div class="test">this is text
-      {{isVisible}}
-      <button @click="clickButton(true)">open</button>
-      <button @click="clickTest">clickTest</button>
-      <div class="end">this is end</div>
-    </div>
-    <sbottom-sheet v-model="isVisible" :draggable="true" :height="'300px'" :overlay="true" :outside-close="false" :outside-scroll="true" :outside-click="true" :leave-header="false" :three-step="true" >
+    <button @click="clickButton(true)">open</button>
+    <button @click="clickTest">clickTest</button>
+    <div style="height:700px"></div>
+    <sbottom-sheet v-model="isVisible" :draggable="true" :height="'300px'" :overlay="true" :outside-close="false" :outside-scroll="true" :outside-click="true" :three-step="true" >
       <button @click="clickButton(false)">close</button>
-      </sbottom-sheet>
+    </sbottom-sheet>
   </div>
 </template>
 

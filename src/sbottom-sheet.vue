@@ -70,10 +70,6 @@ export default {
       default: true,
       type: Boolean,
     },
-    leaveHeader: {
-      default: false,
-      type: Boolean,
-    },
     threeStep: {
       default: false,
       type: Boolean,
@@ -85,6 +81,7 @@ export default {
         sheetY: this.height,
         startY: 0,
         transformY: 0,
+        transition: 'none',
         steps: 1,
         checkPosition: this.outsideClick && !this.outsideClose  && !this.overlay
     };
@@ -103,6 +100,7 @@ export default {
         '--slide-icon-color': this.slideIconColor,
         '--border-radius': this.radius,
         '--translate-Y': `translateY(${this.transformY}px)`,
+        '--transition': this.transition,
         position: this.checkPosition ? '' : 'fixed',
       }
       return style
@@ -110,6 +108,7 @@ export default {
   },
   methods: {
     startDragEvent(e) {
+      this.transition = 'none'
       if(this.outsideScroll) this.backgroundScrollOff();
 
       if (e instanceof window.MouseEvent || e instanceof MouseEvent) {
@@ -128,6 +127,7 @@ export default {
     },
     endDragEvent(e){
       const EndY = this.checkEvent(e)
+      this.transition = 'all'
 
       if(this.outsideScroll) this.backgroundScrollOn();
 
@@ -202,6 +202,7 @@ export default {
       immediate: true,
       handler(now) {
         if(now) {
+          this.steps = 1;
           this.isVisible = true;
           if(!this.outsideScroll) this.backgroundScrollOff();
         } else this.backgroundScrollOn();
@@ -226,7 +227,6 @@ export default {
       <!-- -->
       <section class="s--bottom-sheet-content">
         <slot />
-        <div class="test-content"></div>
       </section>
     </div>
   </div>
