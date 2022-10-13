@@ -17,7 +17,9 @@
             }
         }
         // content
-        .s--bottom-sheet-content { width: 100%; height: 100%; overflow: scroll; touch-action: auto !important; margin-top: 20px; }
+        .s--bottom-sheet-content { width: 100%; height: 100%; overflow: scroll; touch-action: auto !important; margin-top: 20px; -ms-overflow-style: none; scrollbar-width: none;
+            &::-webkit-scrollbar{display: none;}
+        }
     }
 }
 
