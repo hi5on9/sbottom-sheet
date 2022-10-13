@@ -46,19 +46,19 @@ export default {
       default: "20px",
       type: String,
     },
-    threshold: { // percentage
+    threshold: {
       default: 150,
       type: Number,
     },
-    outsideClose: { // 시트 바깥 눌러서 닫기
+    outsideClose: {
       default: true,
       type: Boolean,
     },
-    outsideClick: { // 시트 바깥 클릭 되도록
+    outsideClick: {
       default: false,
       type: Boolean,
     },
-    outsideScroll: { // 시트 바깥 스크롤 되도록
+    outsideScroll: {
       default: false,
       type: Boolean
     },
